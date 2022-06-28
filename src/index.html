@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script async defer src="https://app.shuftipro.com/biometric/sdk/shuftipro.min.js"></script>
+<label for="email"></label>
+<input id="email" placeholder="Email..." type="email">
+<label> <input name="request_type" type="radio" value="enroll">
+    Enroll </label>
+<label>
+    <input name="request_type" type="radio" value="authenticate" checked> Authenticate
+</label>
+<button onclick="spInit()">Init</button>
+<iframe src="" id="x-shuftipro-iframe" allow="camera" frameborder="0"></iframe>
+<script>
+
+    function spInit() {
+
+        const access_token = "MzY3YjAwNjM3MDA4YWI5ZDg1YjJmYWVjMGYzN2M2MzdiY2QzZmE4ZA";
+
+        const callback = function () {
+            console.log(arguments);
+        };
+
+        SP.init(callback, access_token);
+    }
+</script>
+</body>
+</html>
