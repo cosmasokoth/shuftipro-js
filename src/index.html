@@ -17,16 +17,77 @@
 <iframe src="" id="x-shuftipro-iframe" allow="camera" frameborder="0"></iframe>
 <script>
 
+    // var authBasic = btoa("YOUR_CLIENT_ID:YOUR_SECRET_KEY");
+    const authBasic = 'NmJmNzhlZDQ4MDc3MzM1MGM0ZDg4OWM1NjJiNzYzMzA5ZDFmNmMwMDAyNWQ1YjgxN2M4MDg0MmNjOTAzNDgyYTokMnkkMTAkeGZUQ2o0NjhRNVBmelRVamV4NGkuTy9rcXJrRHEvYW8zYXRuTm1kUXhIczAxZXNtZ295ai4=';
+
     function spInit() {
 
-        const access_token = "MzY3YjAwNjM3MDA4YWI5ZDg1YjJmYWVjMGYzN2M2MzdiY2QzZmE4ZA";
+        let payload = {
+            reference: `SP_REQUEST_${Math.random()}`,
+            callback_url: "https://yourdomain.com/profile/sp-notify-callback",
+            email: "johndoe@example.com",
+            country: "GB",
+            language: "EN",
+            verification_mode: "any",
+        }
+        payload['face'] = {
+            proof: ""
+        }
 
-        const callback = function () {
-            console.log(arguments);
-        };
+        // Dispatch request via fetch API or with whatever else which best suits for you
+        fetch('https://api.shuftipro.com/get/access/token', {
+            method: 'post',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': 'Basic ' + authBasic
+            }
+        }).then(function (response) {
+            return response.json();
+        }).then(function (data) {
+            console.log(data);
 
-        SP.init(callback, access_token);
+            let authBearer = data["access_token"];
+
+            fetch("https://api.shuftipro.com/biometric/auth", {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    "Content-Type": "application/json",
+//                  'Authorization': 'Basic ' + authBasic
+                    'Authorization': 'Bearer ' + authBearer
+                },
+                body: JSON.stringify({
+                    reference: `SP_REQUEST_${Math.random()}`,
+                    "webhook_url": "https://www.example.com",
+                    "request_type": "enroll",
+                    "language": "EN",
+                    "email": "",
+                    "country": "GB",
+                    "document": true,
+                    "phone": true,
+                    "question": true
+                })
+            }).then(function (response) {
+                return response.json();
+            }).then(function (data) {
+                console.log(data);
+
+                let accessToken = data["access_token"];
+
+                SP.init(function () {
+
+                    console.log(arguments);
+
+                }, accessToken);
+
+                return data;
+            });
+
+            return data;
+        });
     }
+
 </script>
 </body>
 </html>
